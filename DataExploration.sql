@@ -29,6 +29,7 @@ FROM PortfolioProject..CovidDeaths
 GROUP BY location, population
 ORDER BY PercentPopulationInfected DESC
 
+	
 --Showing Countries with highest Death count per population
 SELECT location, MAX(CONVERT(float, total_deaths)) AS TotalDeathCount
 FROM PortfolioProject..CovidDeaths
@@ -46,12 +47,15 @@ WHERE continent is not NULL
 GROUP BY continent
 ORDER BY TotalDeathCount DESC
 
+	
 --Checking Global Levels
 SELECT SUM(CONVERT(float, new_cases)) AS total_cases, SUM(CONVERT(float, new_deaths)) AS total_deaths, (SUM(CONVERT(float, new_deaths))/SUM(NULLIF(CONVERT(float, new_cases), 0)))*100 AS DeathPercentage
 FROM PortfolioProject..CovidDeaths
 WHERE continent is not null
 ORDER BY 1, 2
 
+
+----EXPLORING DIFFERENT WAYS TO UTILIZE NEWLY MADE COLUMNS (CTE, TEMP TABLE, VIEWS)
 --Using a CTE
 With PopVsVac (continent, location, date, population, new_vaccinations, rolling_vaccinations)
 AS
@@ -68,6 +72,7 @@ AS
 SELECT *,  (rolling_vaccinations/population)*100 AS PercentPopulationVaccinated
 FROM PopVsVac
 
+	
 -- TempTable
 DROP TABLE IF EXISTS #PercentPeopleVaccinated
 CREATE TABLE #PercentPeopleVaccinated
@@ -86,7 +91,6 @@ FROM PortfolioProject..CovidDeaths dea
 JOIN PortfolioProject..CovidVaccinations vac
 	ON dea.location = vac.location AND dea.date = vac.date
 WHERE dea.continent IS NOT NULL
---ORDER BY 2,3
 
 SELECT *, (Rolling_vaccinations/Population * 100)
 FROM #PercentPeopleVaccinated
